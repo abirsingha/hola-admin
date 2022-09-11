@@ -1,0 +1,122 @@
+import React, {useState, useCallback, useEffect} from "react";
+import ResourceFilter from "../Dashboard/ResourceFilter";
+import ResourceItem from "../Dashboard/ResourceItem";
+import InfoText from "../UI/InfoText";
+import Wrapper from "../UI/Wrapper";
+import resourceLinkImg from "../../Assests/link_img.png";
+import Paginations from "../UI/Paginations";
+
+const resourceData = [
+    {
+      image: resourceLinkImg,
+      id: "p1",
+      heading: "How To Register Your Business",
+      buttontext: "Open",
+    },
+    {
+      image: resourceLinkImg,
+      id: "p2",
+      heading: "Company Registration Guide - PTY Company Registration",
+      buttontext: "Open",
+    },
+    {
+      image: resourceLinkImg,
+      id: "p3",
+      heading: "Tax Info For Small Business",
+      buttontext: "Open",
+    },
+    {
+      image: resourceLinkImg,
+      id: "p4",
+      heading: "How To expande Your Business",
+      buttontext: "Open",
+    },
+    {
+      image: resourceLinkImg,
+      id: "p5",
+      heading: "How To market Your product",
+      buttontext: "Open",
+    },
+    {
+      image: resourceLinkImg,
+      id: "p6",
+      heading: "How To get more visitors on your site",
+      buttontext: "Open",
+    },
+  ];
+
+let resourceList = []
+const ResourceContent = () => {
+  const [listPerpage, setListPerpage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const listPerpageHandler = (event) => {
+    setListPerpage(event.target.value);
+  }
+
+  resourceList = resourceData.map((res) => (
+    <ResourceItem src={res.image} target="_blank" href="https://example.com" heading={res.heading} btntext={res.buttontext} key={res.id}/>
+  ));
+
+  useEffect(() => {
+  }, [listPerpage])
+  
+  resourceList.length = listPerpage;
+
+  
+  let NUM_OF_RECORDS = resourceList.length;
+  let LIMIT = 5;
+
+  const onPageChanged = useCallback(
+    (event, page) => {
+      event.preventDefault();
+      setCurrentPage(page);
+    },
+    [setCurrentPage]
+  );
+  const currentList = resourceList.slice(
+    (currentPage - 1) * LIMIT,
+    (currentPage - 1) * LIMIT + LIMIT
+  );
+
+    return(
+        <Wrapper>
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="col-12 col-sm-12 col-md-12 col-lg-12">
+                        <InfoText text="Resource Links" />
+                    </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-12">
+                      <div className="viewBox mr-0">
+                        <div className="form-group">
+                          <label>View:</label>
+                          <select onChange={listPerpageHandler} value={listPerpage}>
+                            <option value={3}>3</option>      
+                            <option value={5}>5</option>        
+                            <option value={10}>10</option>
+                            <option value={20}>20</option>
+                            <option value={30}>30</option>
+                            <option value={40}>40</option>
+                          </select>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="resourceBody">
+                    {currentList}
+                </div>
+                <Paginations
+                totalRecords={NUM_OF_RECORDS}
+                pageLimit={LIMIT}
+                pageNeighbours={2}
+                onPageChanged={onPageChanged}
+                currentPage={currentPage}
+              />
+            </div>
+        </Wrapper>
+    );
+}
+
+export default ResourceContent;
